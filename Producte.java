@@ -1,21 +1,18 @@
 public class Producte {
 
-    private int id; //4 bytes
-    private String nom; //20 * 2 = 40 bytes
-    private String descripcio; //50 * 2 = 100 bytes
-    private double preu; //8 bytes
-    private int stock; //4 bytes
-    private boolean estaDisponible; //1 byte
-    private Categories categoria;
+    private int id;                  //              4 bytes
+    private String nom;              //  20 * 2 =   40 bytes
+    private String descripcio;       //  120 * 2 = 240 bytes
+    private double preu;             //              8 bytes
+    private int stock;               //              4 bytes
+    private boolean estaDisponible;  //              1 byte
+    private int categoria;           //              4 bytes
+    private boolean estaEliminat;    //              1 byte
+                                     //TOTAL BYTES 302 bytes
 
-    // TOTAL BYTES 4 + 40 + 120 + 8 + 4 + 1 + = 177 bytes
-
-    private final int LLARGARIA_MAX_NOM = 20;
-    private final int LLARGARIA_MAX_DESCRIPCIO = 120;
-    private final int LLARGARIA_MAX_PRODUCTE = 177;  //TOTAL BYTES 4 + 40 + 120 + 8 + 4 + 1 + = 177 bytes
 
     //CONSTRUCTOR
-    public Producte(int id, String nom, String descripcio, double preu, int stock, boolean estaDisponible, Categories categoria){
+    public Producte(int id, String nom, String descripcio, double preu, int stock, boolean estaDisponible, int categoria, boolean estaEliminat){
         this.id = id;
         this.nom = nom;
         this.descripcio = descripcio;
@@ -23,6 +20,7 @@ public class Producte {
         this.stock = stock;
         this.estaDisponible = estaDisponible;
         this.categoria = categoria;
+        this.estaEliminat = estaEliminat;
     }
 
 
@@ -49,12 +47,13 @@ public class Producte {
     @Override
     public String toString() {
         return "Producte {" +
-                "id=" + id +
-                ", nom='" + nom + '\'' +
-                ", descripcio='" + descripcio + '\'' +
-                ", preu=" + preu +
-                ", stock=" + stock +
-                ", estaDisponible=" + estaDisponible +
+                "ID: " + id +
+                ", Nom: '" + nom + '\'' +
+                ", Descripcio: '" + descripcio + '\'' +
+                ", Preu: " + preu +
+                ", Stock: " + stock +
+                ", EstaDisponible: " + estaDisponible +
+                ", Categoria: " + categoria +
                 '}';
     }
 
@@ -77,8 +76,11 @@ public class Producte {
     public boolean getEstaDisponible(){
         return estaDisponible;
     }
-    public Categories getCategoria(){
+    public int getCategoria(){
         return categoria;
+    }
+    public boolean getEstaEliminat(){
+        return estaEliminat;
     }
 
     //SETTERS
@@ -100,7 +102,10 @@ public class Producte {
     public void setEstaDisponible(boolean estaDisponible){
         this.estaDisponible = estaDisponible;
     }
-    public void setCategoria(Categories categoria){
+    public void setCategoria(int categoria){
         this.categoria = categoria;
+    }
+    public void setEstaEliminat(boolean estaDisponible) {
+        this.estaEliminat = estaDisponible;
     }
 }
