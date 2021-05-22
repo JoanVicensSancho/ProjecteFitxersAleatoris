@@ -1,13 +1,13 @@
 public class Producte {
 
-    private int id;                  //              4 bytes
-    private String nom;              //  20 * 2 =   40 bytes
-    private String descripcio;       //  120 * 2 = 240 bytes
-    private double preu;             //              8 bytes
-    private int stock;               //              4 bytes
-    private boolean estaDisponible;  //              1 byte
-    private int categoria;           //              4 bytes
-    private boolean estaEliminat;    //              1 byte
+    private int id;                  //              4 bytes    0-3
+    private String nom;              //  20 * 2 =   40 bytes    4-43
+    private String descripcio;       //  120 * 2 = 240 bytes    44-283
+    private double preu;             //              8 bytes    284-291
+    private int stock;               //              4 bytes    292-295
+    private boolean estaDisponible;  //              1 byte     296
+    private int categoria;           //              4 bytes    297-300
+    private boolean estaEliminat;    //              1 byte     301
                                      //TOTAL BYTES 302 bytes
 
 
