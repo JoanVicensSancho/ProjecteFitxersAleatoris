@@ -1,19 +1,23 @@
+import com.sun.deploy.security.WSeedGenerator;
+
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
 public class ProducteIO {
 
-    private RandomAccessFile fitxer;
+    private static RandomAccessFile fitxer;
     private Producte producte;
 
-    private final int LLARGARIA_MAX_NOM = 20;  //20 caracters * 2 bytes = 40 bytes
-    private final int LLARGARIA_MAX_DESCRIPCIO = 120;  // 120 caracters * 2 bytes = 240 bytes
-    private final int LLARGARIA_MAX_PRODUCTE = 302;  //TOTAL BYTES 4(id) + 40(nom) + 240(descripcio) + 8(preu) + 4(stock) + 1(estaDisponible) + 4(categoria) + 1(estaEliminat) = 302 bytes
+    private static final int LLARGARIA_MAX_NOM = 20;  //20 caracters * 2 bytes = 40 bytes
+    private static final int LLARGARIA_MAX_DESCRIPCIO = 120;  // 120 caracters * 2 bytes = 240 bytes
 
+    //TOTAL BYTES 4(id) + 40(nom) + 240(descripcio) + 8(preu) + 4(stock) + 1(estaDisponible) + 4(categoria) + 1(estaEliminat) = 302 bytes
+    private static final int LLARGARIA_MAX_PRODUCTE = 4 + (LLARGARIA_MAX_NOM * 2) + (LLARGARIA_MAX_DESCRIPCIO * 2) + 8 + 4 + 1 + 4 + 1;
+    private static final int INDEX_ESTA_ELIMINAT =  LLARGARIA_MAX_PRODUCTE - 1;
 
     /**CONSTRUCTOR */
     public ProducteIO(String fileName, String mode) throws IOException{
-        fitxer = new RandomAccessFile("ElMeuFitxer", "rw");
+        fitxer = new RandomAccessFile("C:\\Users\\Joan\\IdeaProjects\\P3FitxersAccesAleatori\\FitxersCategories\\ElMeuFitxer.txt", "rw");
     }
 
 
@@ -21,7 +25,7 @@ public class ProducteIO {
      * Si no hi ha cap producte eliminat, escriurem el següent al final del fitxer,
      * Si hi ha un producte eliminat, el sobreescrivim*/
 
-    public void inserirProducte(Producte producte) throws IOException {
+    public static void inserirProducte(Producte producte) throws IOException {
 
         if (!esPotSobreescriure()) {
             fitxer.seek(fitxer.length());
@@ -35,8 +39,9 @@ public class ProducteIO {
 
 
     /**Metode que escriu les dades al fitxer*/
-    public void escriureProductes(Producte producte) throws IOException {
+    public static void escriureProductes(Producte producte) throws IOException {
 
+        fitxer.seek(fitxer.length());
         //Escriure l'id del producte (int)
         fitxer.writeInt(producte.getId());
 
@@ -65,45 +70,31 @@ public class ProducteIO {
 
 
 
+
+
     /**Metode que RETORNA un producte determinat del fitxer
      * @param idProducte*/
 
-    public Producte getProducte(int idProducte) throws IOException{
+    public static void getProducte(int idProducte) throws IOException{
 
         /**Cercam el producte que volem amb el metode (getIndexProducte) que ens retorna el seu index.
-         * Colocam el punter sobre l'index que ens ha retornat
-         * Li passam l'index al metode (llegirProducte) i ens retorna el producte  */
-        fitxer.seek(getIndexProducte(idProducte));
-        return llegirProducte();
+         * Colocam el punter sobre el boolean que ens diu si el producte esta eliminat o no.
+         * Si esta eliminat, ens imprimira un misstage per pantalla diguent que el producte esta eliminat,
+         * Si no esta eliminat, utilitzam el metode (llegirProducte) que ens llegeix el producte  */
 
-    }
-
-    /**Metode que retorna l'index del producte amb la id que li passem per parametre
-     * @param idParametre*/
-
-    public int getIndexProducte(int idParametre) throws IOException {
-
-        //Situam el punter a la posicio 0 del producte
-        fitxer.seek(0);
-
-        /**Repetim el bucle tantes vegades com productes hi ha la fitxer
-         * A cada iteracio situam el punter a l'inici de cada producte
-         * Comparam si l'ID que llegim és igual al ID que li hem passat per parametre
-         * Si coincideixen, multiplicam i * la llargaria del producte i retornem el resultat (i * LLARGARIA_MAX_PRODUCTE)
-         * Si no coincideixen retornem -1*/
-
-        for (int i = 0; i < (fitxer.length() / LLARGARIA_MAX_PRODUCTE); i++){
-            fitxer.seek(i * LLARGARIA_MAX_PRODUCTE);
-            if (fitxer.readInt() == idParametre) {
-                return i * LLARGARIA_MAX_PRODUCTE;
-            }
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_ESTA_ELIMINAT);
+        if (fitxer.readBoolean()){
+            System.out.println("Aquest producte no existeix.");
         }
-        return -1;
+        else {
+            fitxer.seek(getIndexProducte(idProducte));
+            llegirProducte();
+        }
     }
 
     /**Retorna un producte */
 
-    public Producte llegirProducte() throws IOException{
+    public static void llegirProducte() throws IOException{
 
         Producte producte = new Producte(0, "", "", 0, 0, false, 0, false );
 
@@ -116,35 +107,57 @@ public class ProducteIO {
             producte.setEstaDisponible(fitxer.readBoolean());
             producte.setCategoria(fitxer.readInt());
         }
-        return producte;
     }
 
     /**Llegeix un String i el retorna*/
 
-    public String llegirString(int llargariaString) throws IOException{
-        String string = "";
+    public static String llegirString(int llargariaString) throws IOException{
+        StringBuilder string = new StringBuilder();
         for (int i = 0; i < llargariaString; i++){
-            string += fitxer.readChar();
+            string.append(fitxer.readChar());
         }
-        return string;
+        return string.toString();
     }
 
+
+    /**Metode que retorna l'index del producte amb la id que li passem per parametre
+     * @param idParametre*/
+
+    public static int getIndexProducte(int idParametre) throws IOException {
+
+        //Situam el punter a la posicio 0 del producte
+        fitxer.seek(0);
+
+        /**Repetim el bucle tantes vegades com productes hi ha la fitxer
+         * A cada iteracio situam el punter a l'inici de cada producte
+         * Comparam si l'ID que llegim és igual al ID que li hem passat per parametre
+         * Si coincideixen, multiplicam i * la llargaria del producte i retornem el resultat (i * LLARGARIA_MAX_PRODUCTE)
+         * Si no coincideixen retornem 0 per colocar el punter al incici del fitxer*/
+
+        for (int i = 0; i < (fitxer.length() / LLARGARIA_MAX_PRODUCTE); i++){
+            fitxer.seek((long) i * LLARGARIA_MAX_PRODUCTE);
+            if (fitxer.readInt() == idParametre) {
+                return i * LLARGARIA_MAX_PRODUCTE;
+            }
+        }
+        return 0;
+    }
 
 
 
     /**Metode que retorna true si hi ha un producte que es pugui sobreescriure i false si no
      * Recorrem tot el fitxer cercant productes que es puguin sobreescriure, si no en trobam cap retorna false*/
 
-    public boolean esPotSobreescriure() throws IOException{
+    public static boolean esPotSobreescriure() throws IOException, NullPointerException{
 
         //Colocam el punter a al principi del fitxer
-        fitxer.seek(0);
+        fitxer.seek(1);
 
         /**Repetim el bucle tantres vegades com productes hi ha dins el fitxer.
          * Colocam el punter a la posicio exacta on es troba el boolean que indica si un producte esta eliminat, es a dir es pot reescriure
          * Si el boolean que he llegit es false, significa que el producte NO es pot reescriure i retornara FALSE*/
         for (int i = 0; i < fitxer.length() / LLARGARIA_MAX_PRODUCTE; i++){
-            fitxer.seek((i * LLARGARIA_MAX_PRODUCTE) + 301);
+            fitxer.seek(((long) i * LLARGARIA_MAX_PRODUCTE) + 301);
             if (fitxer.readBoolean()){
                 return true;
             }
@@ -153,7 +166,7 @@ public class ProducteIO {
     }
 
 
-    public int getIndexPerSobreescriure() throws IOException {
+    public static int getIndexPerSobreescriure() throws IOException, NullPointerException {
 
         //Situam el punter a la posicio 0 del producte
         fitxer.seek(0);
@@ -161,23 +174,15 @@ public class ProducteIO {
         /**Repetim el bucle tantes vegades com productes hi ha la fitxer
          * A cada iteracio situam el punter al boolean (estaEliminat) de cada producte
          * Si es true (si es pot sobreescriure), retornem el seu index
-         * Si ha acabat el bucle i no ha trobat cap false, retorà -1*/
+         * Si ha acabat el bucle i no ha trobat cap false, retorà 0*/
 
         for (int i = 0; i < (fitxer.length() / LLARGARIA_MAX_PRODUCTE); i++){
-            fitxer.seek(i * LLARGARIA_MAX_PRODUCTE + 301);
+            fitxer.seek((long) i * LLARGARIA_MAX_PRODUCTE + 301);
             if (fitxer.readBoolean()) {
                 return i * LLARGARIA_MAX_PRODUCTE;
             }
         }
-        return -1;
+        return 0;
     }
 
-
-
-
-    /**Metode per ELIMINAR un producte del fitxer*/
-
-    public void eliminarProducte (int posicio){
-
-    }
 }

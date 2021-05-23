@@ -108,4 +108,5 @@ public class Producte {
     public void setEstaEliminat(boolean estaDisponible) {
         this.estaEliminat = estaDisponible;
     }
+
 }
