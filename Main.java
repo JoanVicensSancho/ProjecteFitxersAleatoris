@@ -8,7 +8,7 @@ public class Main {
         ProducteIO producteIO = new ProducteIO("filename", "rw");
 
         ProducteIO.inserirProducte(producte);
-        ProducteIO.getProducte(1);
+        System.out.println(ProducteIO.llegirProducte());
 
     }
 }

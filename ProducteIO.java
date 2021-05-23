@@ -1,7 +1,7 @@
-import com.sun.deploy.security.WSeedGenerator;
-
+import javax.imageio.IIOException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.SortedMap;
 
 public class ProducteIO {
 
@@ -13,6 +13,12 @@ public class ProducteIO {
 
     //TOTAL BYTES 4(id) + 40(nom) + 240(descripcio) + 8(preu) + 4(stock) + 1(estaDisponible) + 4(categoria) + 1(estaEliminat) = 302 bytes
     private static final int LLARGARIA_MAX_PRODUCTE = 4 + (LLARGARIA_MAX_NOM * 2) + (LLARGARIA_MAX_DESCRIPCIO * 2) + 8 + 4 + 1 + 4 + 1;
+    private static final int INDEX_NOM =  LLARGARIA_MAX_PRODUCTE - 298;
+    private static final int INDEX_DESCRIPCIO =  LLARGARIA_MAX_PRODUCTE - 258;
+    private static final int INDEX_PREU =  LLARGARIA_MAX_PRODUCTE - 18;
+    private static final int INDEX_STOCK =  LLARGARIA_MAX_PRODUCTE - 10;
+    private static final int INDEX_ESTA_DISPONIBLE =  LLARGARIA_MAX_PRODUCTE - 6;
+    private static final int INDEX_CATEGORIA =  LLARGARIA_MAX_PRODUCTE - 5;
     private static final int INDEX_ESTA_ELIMINAT =  LLARGARIA_MAX_PRODUCTE - 1;
 
     /**CONSTRUCTOR */
@@ -94,9 +100,11 @@ public class ProducteIO {
 
     /**Retorna un producte */
 
-    public static void llegirProducte() throws IOException{
+    public static Producte llegirProducte() throws IOException{
 
         Producte producte = new Producte(0, "", "", 0, 0, false, 0, false );
+
+        fitxer.seek(0);
 
         if ((fitxer.getFilePointer() % LLARGARIA_MAX_PRODUCTE) == 0) {
             producte.setId(fitxer.readInt());
@@ -107,6 +115,7 @@ public class ProducteIO {
             producte.setEstaDisponible(fitxer.readBoolean());
             producte.setCategoria(fitxer.readInt());
         }
+        return producte;
     }
 
     /**Llegeix un String i el retorna*/
@@ -185,4 +194,96 @@ public class ProducteIO {
         return 0;
     }
 
+
+
+    /**Incrementar l'stock dels productes
+     * @param idProducte
+     * @param stockSumat
+     * Primer situam el punter sobre l'stock del producte que al que li volem afegir l'stock
+     * A la variable (stockActual) li guardam l'stock que tenim actualment
+     * Tornam a situar el punter sobre l'stock del producte i el sobreescrivim amb la suma de l'stockAcual + l'stock que volem afegir*/
+
+    public static void incrementarStock( int idProducte, int stockSumat) throws IOException{
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_STOCK);
+        int stockActual = fitxer.readInt();
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_STOCK);
+        fitxer.writeInt(stockActual + stockSumat);
+    }
+
+
+    /**Disminuir l'stock dels productes
+     * @param idProducte
+     * @param stockRestat
+     * Colocam el punter sobre l'stock del nostre producte
+     * Llegim l'stock que tenim i el guardam a la variable (stockActual)
+     * Si l'stock que tenim es menor al que volem retirar, imprimim un missatge d'error
+     * Pel contrari colocam el punter sobre l'stock del producte
+     * I el sobreescrivim amb la resta de l'stock actual menos el que volem retirar*/
+
+    public static void disminuirStock(int idProducte, int stockRestat) throws IOException {
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_STOCK);
+        int stockActual = fitxer.readInt();
+
+        if (stockActual < stockRestat){
+            System.out.println("Nomes hi ha " + stockActual + " unitats del producte, no en pots retirar " + stockRestat);
+        }
+        else {
+            fitxer.seek(getIndexProducte(idProducte) + INDEX_STOCK);
+            fitxer.writeInt(stockActual - stockRestat);
+        }
+    }
+
+
+    /**MODIFICAR DADES*/
+
+    /**Canviar l'id*/
+    public static void modificarID(int idAntiga, int idNova) throws IOException{
+
+        fitxer.seek(getIndexProducte(idAntiga));
+        fitxer.writeInt(idNova);
+    }
+
+    /**Canviar la descripcio*/
+    public static void modificarDescripcio(int idProducte, String descripcioNova) throws IOException{
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_DESCRIPCIO);
+        fitxer.writeChars(descripcioNova);
+    }
+
+    /**Canviar el preu*/
+    public static void modificarPreu(int idProducte, int nouPreu) throws IOException{
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_PREU);
+        fitxer.writeInt(nouPreu);
+    }
+
+    /**Canviar la disponibilitat*/
+    public static void modificarDisponibilitat(int idProducte, boolean novaDisponibilitat) throws IOException{
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_ESTA_DISPONIBLE);
+        fitxer.writeBoolean(novaDisponibilitat);
+    }
+
+    /**Canviar la categoria*/
+    public static void modificarCategoria(int idProducte, int novaCategoria) throws IOException{
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_CATEGORIA);
+        fitxer.writeInt(novaCategoria);
+    }
+
+    /**Canviar boolean estaEliminat*/
+    public static void modificarEstaEliminat(int idProducte, boolean nouEstaEliminat) throws IOException{
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_ESTA_ELIMINAT);
+        fitxer.writeBoolean(nouEstaEliminat);
+    }
+    /**Canviar el nom*/
+    public static void modificarNom(int idProducte, String nomNou) throws IOException{
+
+        fitxer.seek(getIndexProducte(idProducte) + INDEX_NOM);
+        fitxer.writeChars(nomNou);
+    }
 }
