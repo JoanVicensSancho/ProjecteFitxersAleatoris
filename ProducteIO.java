@@ -1,7 +1,5 @@
-import javax.imageio.IIOException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
-import java.util.SortedMap;
 
 public class ProducteIO {
 
@@ -47,7 +45,6 @@ public class ProducteIO {
     /**Metode que escriu les dades al fitxer*/
     public static void escriureProductes(Producte producte) throws IOException {
 
-        fitxer.seek(fitxer.length());
         //Escriure l'id del producte (int)
         fitxer.writeInt(producte.getId());
 
@@ -74,14 +71,10 @@ public class ProducteIO {
     }
 
 
-
-
-
-
     /**Metode que RETORNA un producte determinat del fitxer
      * @param idProducte*/
 
-    public static void getProducte(int idProducte) throws IOException{
+    public static Producte getProducte(int idProducte) throws IOException{
 
         /**Cercam el producte que volem amb el metode (getIndexProducte) que ens retorna el seu index.
          * Colocam el punter sobre el boolean que ens diu si el producte esta eliminat o no.
@@ -89,13 +82,16 @@ public class ProducteIO {
          * Si no esta eliminat, utilitzam el metode (llegirProducte) que ens llegeix el producte  */
 
         fitxer.seek(getIndexProducte(idProducte) + INDEX_ESTA_ELIMINAT);
-        if (fitxer.readBoolean()){
-            System.out.println("Aquest producte no existeix.");
+        boolean eliminat = fitxer.readBoolean();
+        if (eliminat){
+            System.out.println("\nAquest producte no existeix.");
         }
         else {
             fitxer.seek(getIndexProducte(idProducte));
-            llegirProducte();
+            return llegirProducte();
         }
+        return new Producte(0, "", "", 0, 0, false, 0, false );
+
     }
 
     /**Retorna un producte */
@@ -103,8 +99,6 @@ public class ProducteIO {
     public static Producte llegirProducte() throws IOException{
 
         Producte producte = new Producte(0, "", "", 0, 0, false, 0, false );
-
-        fitxer.seek(0);
 
         if ((fitxer.getFilePointer() % LLARGARIA_MAX_PRODUCTE) == 0) {
             producte.setId(fitxer.readInt());
@@ -114,6 +108,7 @@ public class ProducteIO {
             producte.setStock(fitxer.readInt());
             producte.setEstaDisponible(fitxer.readBoolean());
             producte.setCategoria(fitxer.readInt());
+            producte.setEstaEliminat(fitxer.readBoolean());
         }
         return producte;
     }
@@ -145,11 +140,12 @@ public class ProducteIO {
 
         for (int i = 0; i < (fitxer.length() / LLARGARIA_MAX_PRODUCTE); i++){
             fitxer.seek((long) i * LLARGARIA_MAX_PRODUCTE);
-            if (fitxer.readInt() == idParametre) {
+            int llegirId = fitxer.readInt();
+            if (llegirId == idParametre) {
                 return i * LLARGARIA_MAX_PRODUCTE;
             }
         }
-        return 0;
+        return -1;
     }
 
 
@@ -160,13 +156,14 @@ public class ProducteIO {
     public static boolean esPotSobreescriure() throws IOException, NullPointerException{
 
         //Colocam el punter a al principi del fitxer
-        fitxer.seek(1);
+        fitxer.seek(0);
 
         /**Repetim el bucle tantres vegades com productes hi ha dins el fitxer.
          * Colocam el punter a la posicio exacta on es troba el boolean que indica si un producte esta eliminat, es a dir es pot reescriure
          * Si el boolean que he llegit es false, significa que el producte NO es pot reescriure i retornara FALSE*/
         for (int i = 0; i < fitxer.length() / LLARGARIA_MAX_PRODUCTE; i++){
-            fitxer.seek(((long) i * LLARGARIA_MAX_PRODUCTE) + 301);
+            long index = (long) i * LLARGARIA_MAX_PRODUCTE + 301;
+            fitxer.seek(index);
             if (fitxer.readBoolean()){
                 return true;
             }
@@ -285,5 +282,9 @@ public class ProducteIO {
 
         fitxer.seek(getIndexProducte(idProducte) + INDEX_NOM);
         fitxer.writeChars(nomNou);
+    }
+
+    public void imprimirLlargaria() throws IOException{
+        System.out.println(fitxer.length());
     }
 }

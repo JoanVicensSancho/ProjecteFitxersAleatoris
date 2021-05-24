@@ -46,15 +46,17 @@ public class Producte {
 
     @Override
     public String toString() {
-        return "Producte {" +
-                "ID: " + id +
-                ", Nom: '" + nom + '\'' +
-                ", Descripcio: '" + descripcio + '\'' +
-                ", Preu: " + preu +
-                ", Stock: " + stock +
-                ", EstaDisponible: " + estaDisponible +
-                ", Categoria: " + categoria +
-                '}';
+        return "\nProducte " +
+                "\n_________________________________" +
+                "\nID:" + id +
+                "\nNom:" + nom +
+                "\nDescripcio: " + descripcio +
+                "\nPreu: " + preu +
+                "\nStock: " + stock +
+                "\nEstaDisponible: " + estaDisponible +
+                "\nCategoria: " + categoria +
+                "\nEstaEliminat: " + estaEliminat
+                ;
     }
 
     //GETTERS
@@ -105,8 +107,8 @@ public class Producte {
     public void setCategoria(int categoria){
         this.categoria = categoria;
     }
-    public void setEstaEliminat(boolean estaDisponible) {
-        this.estaEliminat = estaDisponible;
+    public void setEstaEliminat(boolean estaEliminat) {
+        this.estaEliminat = estaEliminat;
     }
 
 }
