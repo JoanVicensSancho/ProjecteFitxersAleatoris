@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ProducteIO {
 
@@ -84,28 +83,94 @@ public class ProducteIO {
 
         fitxer.seek(0);
         for (int i = 0; i < fitxer.length() / LLARGARIA_MAX_PRODUCTE; i++){
-            fitxer.seek((i * LLARGARIA_MAX_PRODUCTE) + INDEX_ESTA_ELIMINAT);
-            if (fitxer.readBoolean()){
-                continue;
-            }
-            else {
-                fitxer.seek(i * LLARGARIA_MAX_PRODUCTE);
+            fitxer.seek((long)(i * LLARGARIA_MAX_PRODUCTE) + INDEX_ESTA_ELIMINAT);
+
+            if (!fitxer.readBoolean()){
+                fitxer.seek((long) i * LLARGARIA_MAX_PRODUCTE);
                 llegirProducte();
             }
         }
     }
 
-    public void llistarPerCAtegoria() throws IOException{
+    /*public void llistarPerCAtegoria() throws IOException{
 
-        for (int i = 0; i < (fitxer.length() / LLARGARIA_MAX_PRODUCTE); i++){
-            for (int j = 0; j )
+    }*/
+
+    /**Metode que imprimeix la llista dels productes ordenats segons el preu
+     * Li passam un ArrayList amb els indexosDelsProductes dels productes ja ordenats
+     * Recorrem l'ArrayList i si el producte no esta eliminat, colocam el punter sobre l'index del producte, el llegim i imprimim
+     * Si el producte esta eliminat el metode no fa res i no l'imprimeix*/
+
+    public void llistarProductesSegonsPreu(ArrayList<Integer> indexosDelsProductes) throws IOException{
+
+        fitxer.seek(0);
+
+        for (int i = 0; i < indexosDelsProductes.size(); i++){
+            fitxer.seek(indexosDelsProductes.get(i) + INDEX_ESTA_ELIMINAT);
+            if (!fitxer.readBoolean()) { //No esta eliminat
+                fitxer.seek((long) indexosDelsProductes.get(i));
+                llegirProducte();
+            }
         }
     }
 
-    public void llistarPerPreuAscendent(){
-        List<Integer> preus = new ArrayList<>();
+    /**Metode que ordena els indexos dels productes segons el seu preu de forma ascendent amb l'algoritme (selectionSort)
+     *
+     * Primer cream l'ArrayList que retornarem mes tard i li afegim els INDEXOS DELS PRODUCTES que hi ha al fitxer (0 , 302, 604, 906 ...).
+     *
+     * PRIMER BUCLE
+     * Despres el recorrem per poder llegir els preus corresponents a cada producte.
+     * A cada iteracio del primer bucle guardam el PREU i l'INDEX DEL PRODUCTE amb la seva posicio dins l'ArrayList
+     * dins les variables (preuMesPetit, indexProductePreuMesPetit i posicioDelIndex).
+     *
+     * SEGON BUCLE
+     * Al segon bucle utilitzarem la variable preuMesPetit per compararla amb els preus de TOTS els productes del fitxer per trobar el preu mes petit,
+     * si trobam un preu mes petit que el que estam comparant, substiruirem el valor de les variables temporals que hem guardat abans
+     * pels valors asociats al nou preu mes baix (preuMesPetit, indexProductePreuMesPetit, posicioDelIndex).
+     *
+     *
+     * Una vegada hem trobat el preu mes petit intercanviam les seves posicions dins l'ArrayList i tornam a repetir el primer bucle*/
 
-        for (int i )
+    public ArrayList<Integer> ordenarIndexosPreuAscendent() throws IOException{
+
+        ArrayList<Integer> indexos = new ArrayList<>();
+        for (int i = 0; i < fitxer.length() / LLARGARIA_MAX_PRODUCTE; i++){
+            indexos.add(i * LLARGARIA_MAX_PRODUCTE);
+        }
+
+        for (int i = 0; i < indexos.size(); i++){
+
+            fitxer.seek(indexos.get(i) + INDEX_PREU);
+
+            double preuMesPetit = fitxer.readDouble();
+            int indexProductePreuMesPetit = indexos.get(i);
+            int posicioDelIndex = i;
+
+            for (int j = i; j < fitxer.length() / LLARGARIA_MAX_PRODUCTE; j++){
+                fitxer.seek((indexos.get(j)) + INDEX_PREU);
+                if (fitxer.readDouble() < preuMesPetit){
+                    fitxer.seek((indexos.get(j)) + INDEX_PREU);
+                    preuMesPetit = fitxer.readDouble();
+                    indexProductePreuMesPetit = indexos.get(j);
+                    posicioDelIndex = j;
+                }
+            }
+            indexos.set(posicioDelIndex, indexos.get(i));
+            indexos.set(i, indexProductePreuMesPetit);
+        }
+        return indexos;
+    }
+
+    /**Metode que retorna un ArrayList amb els preus de tots els productes que llegeix*/
+
+    public ArrayList<Integer> guardarPreus() throws IOException{
+        ArrayList<Integer> preus = new ArrayList<>();
+
+        fitxer.seek(0);
+        for (int i = 0; i < fitxer.length() / LLARGARIA_MAX_PRODUCTE; i++){
+
+        }
+        return preus;
     }
 
     /**Instanciar un producte amb les dades que llegim

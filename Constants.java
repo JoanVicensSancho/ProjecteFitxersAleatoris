@@ -17,4 +17,7 @@ public class Constants {
     public int getLlargariaMaxNom(){
         return LLARGARIA_MAX_NOM;
     }
+    public int getLlargariaMaxDescripcio(){
+        return LLARGARIA_MAX_DESCRIPCIO;
+    }
 }
