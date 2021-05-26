@@ -131,12 +131,11 @@ public class ProducteIO {
      *
      * Una vegada hem trobat el preu mes petit intercanviam les seves posicions dins l'ArrayList i tornam a repetir el primer bucle*/
 
-    public ArrayList<Integer> ordenarIndexosPreuAscendent() throws IOException{
+    public ArrayList<Integer> ordenarIndexosPreuAscendent(ArrayList<Integer> guardarPreus) throws IOException{
 
-        ArrayList<Integer> indexos = new ArrayList<>();
-        for (int i = 0; i < fitxer.length() / LLARGARIA_MAX_PRODUCTE; i++){
-            indexos.add(i * LLARGARIA_MAX_PRODUCTE);
-        }
+
+        ArrayList<Integer> indexos = guardarPreus();
+
 
         for (int i = 0; i < indexos.size(); i++){
 
@@ -168,7 +167,7 @@ public class ProducteIO {
 
         fitxer.seek(0);
         for (int i = 0; i < fitxer.length() / LLARGARIA_MAX_PRODUCTE; i++){
-
+            preus.add(i * LLARGARIA_MAX_PRODUCTE);
         }
         return preus;
     }

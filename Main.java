@@ -19,11 +19,11 @@ public class Main {
         producteIO.inserirProducte(producte3);
         producteIO.inserirProducte(producte4);
 */
-        producteIO.modificarEstaEliminat(2, false);
+        producteIO.modificarEstaEliminat(4, false);
 
         //producteIO.llistarFitxer();
 
-        producteIO.llistarProductesSegonsPreu(producteIO.ordenarIndexosPreuAscendent());
+        producteIO.llistarProductesSegonsPreu(producteIO.ordenarIndexosPreuAscendent(producteIO.guardarPreus()));
 
         producteIO.imprimirLlargaria();
 
