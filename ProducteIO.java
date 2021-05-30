@@ -13,6 +13,14 @@ public class ProducteIO {
     }
 
 
+
+
+
+
+
+
+
+
     /**Metode per INSERIR un producte nou al final del fitxer
      * Si no hi ha cap producte eliminat, escriurem el següent al final del fitxer,
      * Si hi ha un producte eliminat, el sobreescrivim*/
@@ -22,7 +30,6 @@ public class ProducteIO {
         fitxer.seek(getIndexPerEscriure());
         escriureProductes(producte);
     }
-
 
     /**Metode que escriu les dades al fitxer*/
     public void escriureProductes(Producte producte) throws IOException {
@@ -52,6 +59,15 @@ public class ProducteIO {
         fitxer.writeBoolean(producte.getEstaEliminat());
     }
 
+
+
+
+
+
+
+
+
+
     /**Instanciar un producte amb les dades que llegim
      * I l'imprimim*/
 
@@ -75,10 +91,19 @@ public class ProducteIO {
         return string.toString();
     }
 
+
+
+
+
+
+
+
+
+
     /**Metode que ens diu si un producte en concret esta eliminat o no.
      * Si el producte esta eliminat, retorna TRUE
      * Si NO esta eliminat retorna FALSE*/
-    public boolean elProducteEstaEliminat(int indexProducte) throws IOException{
+    public boolean getElProducteEstaEliminat(int indexProducte) throws IOException{
 
         fitxer.seek(indexProducte + Constants.INDEX_ESTA_ELIMINAT);
         if (fitxer.readBoolean()){
@@ -90,7 +115,7 @@ public class ProducteIO {
     /**Metode que ens diu si un producte en concret esta disponible o no.
      * Si el producte esta dispnible, retorna TRUE
      * Si NO esta disponible retorna FALSE*/
-    public boolean elProducteEstaDisponible(int indexProducte) throws IOException{
+    public boolean getElProducteEstaDisponible(int indexProducte) throws IOException{
 
         fitxer.seek(indexProducte + Constants.INDEX_ESTA_DISPONIBLE);
         if (fitxer.readBoolean()){
@@ -99,19 +124,36 @@ public class ProducteIO {
         return false;
     }
 
+    /**Metode que retorna la categoria del producte que hi ha a l'index que li passam*/
+
+    public int getCategoriaDelProducte(int indexProducte) throws IOException {
+
+        fitxer.seek(indexProducte + Constants.INDEX_CATEGORIA);
+        return fitxer.readInt();
+    }
+
+
+
+
+
+
+
+
+
+
     /**Metode que llegeix tot el fitxer*/
 
     public void llistarFitxerAdmins() throws IOException {
 
         /**Colocam el punter a l'inici del fitxer
-         * Recorrem el fitxer i miram si el producte que estam mirant esta eliminat amb el metode (elProducteEstaEliminat)
+         * Recorrem el fitxer i miram si el producte que estam mirant esta eliminat amb el metode (getElProducteEstaEliminat)
          * Si esta eliminat, el bucle continua fora llegir el producte
          * Si NO esta eliminat, colocam el punter al principi del producte i el llegim*/
 
         fitxer.seek(0);
         for (int i = 0; i < fitxer.length() / Constants.LLARGARIA_MAX_PRODUCTE; i++){
 
-            if (!elProducteEstaEliminat(i * Constants.LLARGARIA_MAX_PRODUCTE)){
+            if (!getElProducteEstaEliminat(i * Constants.LLARGARIA_MAX_PRODUCTE)){
                 fitxer.seek((long) i * Constants.LLARGARIA_MAX_PRODUCTE);
                 llegirProducte();
             }
@@ -121,15 +163,43 @@ public class ProducteIO {
     public void llistarFitxerClients() throws IOException {
 
         /**Colocam el punter a l'inici del fitxer
-         * Recorrem el fitxer i miram si el producte que estam mirant esta eliminat i disponible amb el metode (elProducteEstaEliminat, elProducteEstaDisponible)
+         * Recorrem el fitxer i miram si el producte que estam mirant esta eliminat i disponible amb el metode (getElProducteEstaEliminat, getElProducteEstaDisponible)
          * Si esta eliminat, el bucle continua fora llegir el producte
          * Si NO esta eliminat, colocam el punter al principi del producte i el llegim*/
 
         fitxer.seek(0);
         for (int i = 0; i < fitxer.length() / Constants.LLARGARIA_MAX_PRODUCTE; i++){
 
-            if (!elProducteEstaEliminat(i * Constants.LLARGARIA_MAX_PRODUCTE) && elProducteEstaDisponible(i * Constants.LLARGARIA_MAX_PRODUCTE)){
+            if (!getElProducteEstaEliminat(i * Constants.LLARGARIA_MAX_PRODUCTE) && getElProducteEstaDisponible(i * Constants.LLARGARIA_MAX_PRODUCTE)){
                 fitxer.seek((long) i * Constants.LLARGARIA_MAX_PRODUCTE);
+                llegirProducte();
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+    /**Metode que imprimeix la llista dels productes ordenats segons el preu
+     * Li passam un ArrayList amb els indexosDelsProductes dels productes ja ordenats
+     * Recorrem l'ArrayList i si el producte no esta eliminat, colocam el punter sobre l'index del producte, el llegim i imprimim
+     * Si el producte esta eliminat el metode no fa res i no l'imprimeix
+     *
+     * Per obtenir l'ArrayList utilitzam el metode (ordenarIndexosPreuAscendent)*/
+
+    public void llistarProductesSegonsPreuAdmins(ArrayList<Integer> indexosDelsProductes) throws IOException{
+
+        fitxer.seek(0);
+
+        for (int i = 0; i < indexosDelsProductes.size(); i++){
+            if (!getElProducteEstaEliminat(indexosDelsProductes.get(i))) { //Si el producte NO esta eliminat
+                fitxer.seek((long) indexosDelsProductes.get(i));
                 llegirProducte();
             }
         }
@@ -142,13 +212,12 @@ public class ProducteIO {
      *
      * Per obtenir l'ArrayList utilitzam el metode (ordenarIndexosPreuAscendent)*/
 
-    public void llistarProductesSegonsPreu(ArrayList<Integer> indexosDelsProductes) throws IOException{
+    public void llistarProductesSegonsPreuClients(ArrayList<Integer> indexosDelsProductes) throws IOException{
 
         fitxer.seek(0);
 
         for (int i = 0; i < indexosDelsProductes.size(); i++){
-            fitxer.seek(indexosDelsProductes.get(i) + Constants.INDEX_ESTA_ELIMINAT);
-            if (!fitxer.readBoolean()) { //No esta eliminat
+            if (!getElProducteEstaEliminat(indexosDelsProductes.get(i)) && getElProducteEstaDisponible(indexosDelsProductes.get(i))) { //Si el producte NO esta eliminat i ademes esta disponible
                 fitxer.seek((long) indexosDelsProductes.get(i));
                 llegirProducte();
             }
@@ -211,17 +280,45 @@ public class ProducteIO {
         return preus;
     }
 
-    public void filtrarPerCategoria(int categoria) throws IOException{
+    /**Metode que recorre tots els productes del fitxer.
+     * Si el producte que estam mirant pertany a la categoria que li hem passat per paramtre i no esta eliminat el mostram per pantalla*/
+
+    public void llistarPerCategoriaAdmins(int categoria) throws IOException{
 
         fitxer.seek(0);
 
         for (int i = 0; i < fitxer.length() / Constants.LLARGARIA_MAX_PRODUCTE; i++){
-            fitxer.seek((i * Constants.LLARGARIA_MAX_PRODUCTE) + Constants.INDEX_CATEGORIA);
-            if (fitxer.readInt() == categoria){
+            //si la categoria del producte coincideix amb la que volem i no esta eliminat el llegim i l'imprimim
+            if ((getCategoriaDelProducte(i * Constants.LLARGARIA_MAX_PRODUCTE) == categoria) && (!getElProducteEstaEliminat(i * Constants.LLARGARIA_MAX_PRODUCTE))){
+                fitxer.seek(i * Constants.LLARGARIA_MAX_PRODUCTE);
                 llegirProducte();
             }
         }
     }
+
+    /**Metode que recorre tots els productes del fitxer.
+     * Si el producte que estam mirant pertany a la categoria que li hem passat per parametre, no esta eliminat i esta desponible el mostram per pantalla*/
+
+    public void llistarPerCategoriaClients(int categoria) throws IOException{
+
+        fitxer.seek(0);
+
+        for (int i = 0; i < fitxer.length() / Constants.LLARGARIA_MAX_PRODUCTE; i++){
+            //si la categoria del producte coincideix amb la que volem, no esta eliminat i esta disponible, el llegim i l'imprimim
+            if ((getCategoriaDelProducte(i * Constants.LLARGARIA_MAX_PRODUCTE) == categoria) && (!getElProducteEstaEliminat(i * Constants.LLARGARIA_MAX_PRODUCTE)) && (getElProducteEstaDisponible(i * Constants.LLARGARIA_MAX_PRODUCTE))){
+                fitxer.seek(i * Constants.LLARGARIA_MAX_PRODUCTE);
+                llegirProducte();
+            }
+        }
+    }
+
+
+
+
+
+
+
+
 
 
     /**Metode que retorna l'index del producte amb la id que li passem per parametre
@@ -295,6 +392,13 @@ public class ProducteIO {
 
 
 
+
+
+
+
+
+
+
     /**Incrementar l'stock dels productes
      * @param idProducte
      * @param stockSumat
@@ -334,7 +438,6 @@ public class ProducteIO {
             fitxer.writeInt(stockActual - stockRestat);
         }
     }
-
 
     /**MODIFICAR DADES*/
 
