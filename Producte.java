@@ -5,21 +5,21 @@ public class Producte {
     private String descripcio;       //  120 * 2 = 240 bytes    44-283
     private double preu;             //              8 bytes    284-291
     private int stock;               //              4 bytes    292-295
-    private boolean estaDisponible;  //              1 byte     296
-    private int categoria;           //              4 bytes    297-300
+    private int categoria;           //              4 bytes    296-299
+    private boolean estaDisponible;  //              1 byte     300
     private boolean estaEliminat;    //              1 byte     301
                                      //TOTAL BYTES 302 bytes
 
 
     //CONSTRUCTOR
-    public Producte(int id, String nom, String descripcio, double preu, int stock, boolean estaDisponible, int categoria, boolean estaEliminat){
+    public Producte(int id, String nom, String descripcio, double preu, int stock, int categoria, boolean estaDisponible, boolean estaEliminat){
         this.id = id;
         this.nom = nom;
         this.descripcio = descripcio;
         this.preu = preu;
         this.stock = stock;
-        this.estaDisponible = estaDisponible;
         this.categoria = categoria;
+        this.estaDisponible = estaDisponible;
         this.estaEliminat = estaEliminat;
     }
 
@@ -53,8 +53,8 @@ public class Producte {
                 "\nDescripcio: " + descripcio +
                 "\nPreu: " + preu +
                 "\nStock: " + stock +
-                "\nEstaDisponible: " + estaDisponible +
                 "\nCategoria: " + categoria +
+                "\nEstaDisponible: " + estaDisponible +
                 "\nEstaEliminat: " + estaEliminat
                 ;
     }
@@ -75,11 +75,11 @@ public class Producte {
     public int getStock(){
         return stock;
     }
-    public boolean getEstaDisponible(){
-        return estaDisponible;
-    }
     public int getCategoria(){
         return categoria;
+    }
+    public boolean getEstaDisponible(){
+        return estaDisponible;
     }
     public boolean getEstaEliminat(){
         return estaEliminat;
@@ -101,11 +101,11 @@ public class Producte {
     public void setStock(int stock){
         this.stock = stock;
     }
-    public void setEstaDisponible(boolean estaDisponible){
-        this.estaDisponible = estaDisponible;
-    }
     public void setCategoria(int categoria){
         this.categoria = categoria;
+    }
+    public void setEstaDisponible(boolean estaDisponible){
+        this.estaDisponible = estaDisponible;
     }
     public void setEstaEliminat(boolean estaEliminat) {
         this.estaEliminat = estaEliminat;
