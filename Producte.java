@@ -24,39 +24,28 @@ public class Producte {
     }
 
 
-    /**Metode que ajusta la llargaria dels Strings, si son massa curts, els allarga amb espais fins que
-     * arribin a la seva màxima llargaria, (si es un nom 20 caracters, si es una descripcio 120 caracters)*/
-
-    public String llargariaStringAjustada(String string, int llargariaMax){
-
-        String stringAjustat = string;
-
-        if (string.length() > llargariaMax){
-            stringAjustat = stringAjustat.substring(0, llargariaMax);
-            return stringAjustat;
-        }
-
-        for (int i = string.length(); i < llargariaMax; i++){
-            stringAjustat += " ";
-        }
-
-        return stringAjustat;
-
+    public String toStringAdmins() {
+        return Constants.BLUE +
+                "\nPRODUCTE " +
+                "\n_________________________________" +
+                Constants.RESET +
+                Constants.GREEN + "\nID: " + Constants.RESET + id +
+                Constants.GREEN + "\nNom: " + Constants.RESET + nom +
+                Constants.GREEN + "\nDescripcio: " + Constants.RESET + descripcio +
+                Constants.GREEN + "\nPreu: " + Constants.RESET + preu + "€" +
+                Constants.GREEN + "\nStock: " + Constants.RESET + stock +
+                Constants.GREEN + "\nCategoria: " + Constants.RESET + categoria +
+                Constants.GREEN + "\nEstaDisponible: " + Constants.RESET + estaDisponible;
     }
 
-    @Override
-    public String toString() {
-        return "\nProducte " +
+    public String toStringClients() {
+        return Constants.BLUE +
+                "\nPRODUCTE " +
                 "\n_________________________________" +
-                "\nID:" + id +
-                "\nNom:" + nom +
-                "\nDescripcio: " + descripcio +
-                "\nPreu: " + preu +
-                "\nStock: " + stock +
-                "\nCategoria: " + categoria +
-                "\nEstaDisponible: " + estaDisponible +
-                "\nEstaEliminat: " + estaEliminat
-                ;
+                Constants.RESET +
+                Constants.GREEN + "\nNom: " + Constants.RESET + nom +
+                Constants.GREEN + "\nDescripcio: " + Constants.RESET + descripcio +
+                Constants.GREEN + "\nPreu: " + Constants.RESET + preu + "€";
     }
 
     //GETTERS

@@ -13,4 +13,10 @@ public class Constants {
     public static final int INDEX_ESTA_DISPONIBLE = LLARGARIA_MAX_PRODUCTE - 2;
     public static final int INDEX_ESTA_ELIMINAT = LLARGARIA_MAX_PRODUCTE - 1;
 
+    public static final String BLUE = "\033[34m";   //1 BLUE
+    public static final String GREEN = "\033[32m";  //2 GREEN
+    public static final String RESET = "\u001B[0m"; //RESET
+
+
+
 }
