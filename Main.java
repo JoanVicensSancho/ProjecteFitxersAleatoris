@@ -27,7 +27,6 @@ public class Main {
         //producteIO.llistarPerCategoriaClients(1);
         //producteIO.imprimirLlargaria();
 
-        MainMenu nouMainMenu = new MainMenu(false);
-        nouMainMenu.menu();
+        MainMenu.menu();
     }
 }
