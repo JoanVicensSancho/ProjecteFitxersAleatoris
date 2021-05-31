@@ -6,7 +6,7 @@ public class MenuClient {
 
     public static void menuClient() throws IOException {
 
-        ProducteIO producteIO = new ProducteIO("C:\\Users\\Joan\\IdeaProjects\\P3FitxersAccesAleatori\\ElMeuFitxer.txt", "rw");
+        ProducteIO producteIO = new ProducteIO("ElMeuFitxer.txt", "rw");
 
         boolean vullAcabarExecucio = false;
         while (!vullAcabarExecucio) {

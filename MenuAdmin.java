@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class MenuAdmin {
 
     public static void menuAdmin() throws IOException {
-        ProducteIO producteIO = new ProducteIO("C:\\Users\\Joan\\IdeaProjects\\P3FitxersAccesAleatori\\ElMeuFitxer.txt", "rw");
+        ProducteIO producteIO = new ProducteIO("ElMeuFitxer.txt", "rw");
 
         boolean vullAcabarExecucio = false;
         while (!vullAcabarExecucio) {
@@ -148,7 +148,7 @@ public class MenuAdmin {
     /**Modificar dades*/
     public static void menuModificarDades()throws IOException{
 
-        ProducteIO producteIO = new ProducteIO("C:\\Users\\Joan\\IdeaProjects\\P3FitxersAccesAleatori\\ElMeuFitxer.txt", "rw");
+        ProducteIO producteIO = new ProducteIO("ElMeuFitxer.txt", "rw");
 
         Scanner eleccio = new Scanner(System.in);
         System.out.print("\nEleccio: ");
@@ -310,7 +310,7 @@ public class MenuAdmin {
     /**Llistar productes*/
     public static void menuLlistarProductes() throws IOException {
 
-        ProducteIO producteIO = new ProducteIO("C:\\Users\\Joan\\IdeaProjects\\P3FitxersAccesAleatori\\ElMeuFitxer.txt", "rw");
+        ProducteIO producteIO = new ProducteIO("ElMeuFitxer.txt", "rw");
 
         Scanner eleccio = new Scanner(System.in);
         System.out.print("\nEleccio: ");
